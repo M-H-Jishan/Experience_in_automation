@@ -1,0 +1,8 @@
+spacy==3.5.3
+SQLAlchemy==1.4.46
+psycopg2-binary==2.9.6
+stripe==5.4.0
+transitions==0.9.0
+python-dotenv==1.0.0
+
+#Also, install the English language model for spaCy: python -m spacy download en_core_web_sm
