@@ -1,0 +1,12 @@
+email:
+  address: your_email@example.com
+  password: your_password
+
+calendar:
+  credentials_file: path/to/credentials.json
+
+lead_generation:
+  threshold: 0.7
+
+recommendation:
+  n_clusters: 5
