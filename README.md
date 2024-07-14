@@ -1,0 +1,5 @@
+- 👋 Hi, I’m @M-H-Jishan
+- 👀 I’m interested in Game Development and Artificial Intelligence.
+- 🌱 I’m currently learning usefull programming languages, and Ai chatbot development.
+- 💞️ I’m looking to collaborate with a Ai Automation Company.
+- 📫 How to reach me by my email: mh.jishan247@gmail.com or my linked in profile url: www.linkedin.com/in/m-h-jishan
