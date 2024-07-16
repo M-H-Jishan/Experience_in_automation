@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>LangSwitch - AI-Powered Translation</title>
+    <link rel="stylesheet" href="../static\style.css">
+</head>
+<body>
+    <div class="container">
+        <h1>LangSwitch</h1>
+        <div class="chat-container">
+            <div id="chat-messages"></div>
+            <div class="input-area">
+                <select id="source-lang">
+                    <option value="auto">Auto-detect</option>
+                    <option value="en">English</option>
+                    <option value="es">Spanish</option>
+                    <option value="fr">French</option>
+                    <!-- Add more language options -->
+                </select>
+                <select id="target-lang">
+                    <option value="en">English</option>
+                    <option value="es">Spanish</option>
+                    <option value="fr">French</option>
+                    <!-- Add more language options -->
+                </select>
+                <input type="text" id="user-input" placeholder="Enter text to translate...">
+                <button id="send-btn">Translate</button>
+            </div>
+        </div>
+    </div>
+    <script src="../static\script.js"></script>
+</body>
+</html>
