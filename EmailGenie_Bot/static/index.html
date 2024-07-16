@@ -1,0 +1,60 @@
+<!-- templates/index.html -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>EmailGenie</title>
+    <style>
+        body { font-family: Arial, sans-serif; }
+        .container { width: 50%; margin: auto; padding: 20px; }
+        .input-group { margin-bottom: 15px; }
+        .input-group label { display: block; margin-bottom: 5px; }
+        .input-group input, .input-group textarea { width: 100%; padding: 10px; }
+        .output { margin-top: 20px; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>EmailGenie</h1>
+        <div class="input-group">
+            <label for="name">Name:</label>
+            <input type="text" id="name">
+        </div>
+        <div class="input-group">
+            <label for="email">Email:</label>
+            <input type="email" id="email">
+        </div>
+        <div class="input-group">
+            <label for="profile_data">Profile Data:</label>
+            <textarea id="profile_data" rows="5"></textarea>
+        </div>
+        <button id="generate_email">Generate Email</button>
+        <div class="output" id="output"></div>
+    </div>
+
+    <script>
+        document.getElementById('generate_email').addEventListener('click', function () {
+            const name = document.getElementById('name').value;
+            const email = document.getElementById('email').value;
+            const profileData = document.getElementById('profile_data').value;
+
+            fetch('/generate_email', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({ name, email, profile_data: profileData })
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.email_content) {
+                    document.getElementById('output').innerHTML = `<pre>${data.email_content}</pre>`;
+                } else {
+                    document.getElementById('output').innerHTML = `<p>Error: ${data.message}</p>`;
+                }
+            });
+        });
+    </script>
+</body>
+</html>
