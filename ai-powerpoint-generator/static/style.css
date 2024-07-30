@@ -1,0 +1,14 @@
+/* You can add custom CSS for Streamlit here */
+body {
+    color: #333;
+    font-family: Arial, sans-serif;
+}
+
+.stButton > button {
+    background-color: #4CAF50;
+    color: white;
+}
+
+.stTextInput > div > div > input {
+    border-color: #4CAF50;
+}
