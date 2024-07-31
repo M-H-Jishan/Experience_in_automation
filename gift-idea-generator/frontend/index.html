@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>GiftGenius - Intelligent Gift Recommendations</title>
+    <link rel="stylesheet" href="css/styles.css">
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;700&family=Poppins:wght@600&display=swap" rel="stylesheet">
+    <script src="https://kit.fontawesome.com/a076d05399.js" crossorigin="anonymous"></script>
+</head>
+<body>
+    <header>
+        <nav>
+            <div class="logo">
+                <img src="../frontend/Images/Logo.png" alt="IntelliBot Labs Logo">
+                <span>IntelliBot Labs</span>
+            </div>
+            <ul>
+                <li><a href="#" class="active">Home</a></li>
+                <li><a href="#">About</a></li>
+                <li><a href="#">Contact</a></li>
+            </ul>
+        </nav>
+    </header>
+    <div class="container">
+        <main>
+            <h1>GiftGenius</h1>
+            <p class="subtitle">Intelligent Gift Recommendations Powered by AI</p>
+            <section id="gift-form">
+                <form id="user-input-form">
+                    <div class="form-group">
+                        <label for="age">Recipient's Age:</label>
+                        <input type="number" id="age" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="gender">Recipient's Gender:</label>
+                        <select id="gender" required>
+                            <option value="male">Male</option>
+                            <option value="female">Female</option>
+                            <option value="other">Other</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label for="relation">Your Relation to Recipient:</label>
+                        <input type="text" id="relation" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="interests">Recipient's Interests:</label>
+                        <input type="text" id="interests" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="budget">Your Budget:</label>
+                        <div class="input-prefix">
+                            <span class="prefix">$</span>
+                            <input type="number" id="budget" required>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label for="occasion">Occasion:</label>
+                        <input type="text" id="occasion" required>
+                    </div>
+                    <button type="submit"><i class="fas fa-gift"></i> Generate Gift Ideas</button>
+                </form>
+            </section>
+            <section id="gift-recommendations" style="display: none;">
+                <h2>Your Personalized Gift Recommendations</h2>
+                <div id="recommendations-container"></div>
+            </section>
+        </main>
+        <footer>
+            <p>&copy; 2024 GiftGenius by IntelliBot Labs. All rights reserved.</p>
+        </footer>
+    </div>
+    <div id="loading" style="display: none;">
+        <div class="spinner"></div>
+    </div>
+    <script src="js/script.js"></script>
+</body>
+</html>
