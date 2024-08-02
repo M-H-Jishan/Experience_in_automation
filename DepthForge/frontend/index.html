@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>DepthForge | IntelliBot Labs</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+    <header>
+        <nav>
+            <div class="logo">
+                <img src="img/Logo.png" alt="IntelliBot Labs Logo">
+                <span>IntelliBot Labs</span>
+            </div>
+            <ul>
+                <li><a href="#home"><i class="fas fa-home"></i> Home</a></li>
+                <li><a href="#about"><i class="fas fa-info-circle"></i> About</a></li>
+                <li><a href="#tool"><i class="fas fa-cube"></i> DepthForge</a></li>
+                <li><a href="#contact"><i class="fas fa-envelope"></i> Contact</a></li>
+            </ul>
+        </nav>
+    </header>
+
+    <main>
+        <section id="home" class="hero">
+            <div class="hero-content">
+                <h1>Welcome to DepthForge</h1>
+                <p>Transform your 2D images into stunning 3D models with the power of AI</p>
+                <a href="#tool" class="cta-button">Try It Now</a>
+            </div>
+        </section>
+
+        <section id="about" class="about">
+            <h2>About DepthForge</h2>
+            <p>DepthForge is a cutting-edge tool that leverages advanced AI algorithms to convert your 2D images into detailed 3D models. Whether you're a designer, artist, or enthusiast, DepthForge opens up a world of possibilities for your creative projects.</p>
+        </section>
+
+        <section id="tool" class="tool">
+            <h2>DepthForge Tool</h2>
+            <div id="upload-container">
+                <label for="image-upload" class="custom-file-upload">
+                    <i class="fas fa-cloud-upload-alt"></i> Choose Image
+                </label>
+                <input type="file" id="image-upload" accept="image/*">
+                <button id="upload-button" class="generate-button"><i class="fas fa-cog"></i> Generate 3D Model</button>
+            </div>
+            <div id="model-container"></div>
+        </section>
+
+        <section id="contact" class="contact">
+            <h2>Contact Us</h2>
+            <form>
+                <input type="text" placeholder="Your Name" required>
+                <input type="email" placeholder="Your Email" required>
+                <textarea placeholder="Your Message" required></textarea>
+                <button type="submit" class="submit-button">Send Message</button>
+            </form>
+        </section>
+    </main>
+
+    <footer>
+        <p>&copy; 2024 IntelliBot Labs. All rights reserved.</p>
+        <div class="social-links">
+            <a href="#" target="_blank"><i class="fab fa-twitter"></i></a>
+            <a href="#" target="_blank"><i class="fab fa-facebook"></i></a>
+            <a href="#" target="_blank"><i class="fab fa-linkedin"></i></a>
+            <a href="#" target="_blank"><i class="fab fa-github"></i></a>
+        </div>
+    </footer>
+
+    <script src="js/main.js"></script>
+</body>
+</html>
