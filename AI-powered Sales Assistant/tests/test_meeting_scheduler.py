@@ -6,12 +6,13 @@ from src.meeting_scheduler import MeetingScheduler
 class TestMeetingScheduler(unittest.TestCase):
     def setUp(self):
         self.credentials = MagicMock()
-        self.scheduler = MeetingScheduler(self.credentials)
+        with patch('googleapiclient.discovery.build') as mock_build:
+            self.scheduler = MeetingScheduler(self.credentials)
 
     @patch('googleapiclient.discovery.build')
     def test_schedule_meeting(self, mock_build):
         mock_service = MagicMock()
-        mock_build.return_value = mock_service
+        self.scheduler.service = mock_service
 
         start_time = datetime(2023, 1, 1, 10, 0)
         end_time = datetime(2023, 1, 1, 11, 0)

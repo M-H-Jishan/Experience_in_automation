@@ -1,58 +1,93 @@
-# app.py
+import logging
+import os
+import sys
+from typing import Optional
+
+from dotenv import load_dotenv
 from flask import Flask, request, jsonify, render_template
+from openai import OpenAI
 from sqlalchemy.exc import SQLAlchemyError
-import openai
+
 from models import User, session, init_db
 
-app = Flask(__name__)
+load_dotenv()
 
-# Initialize database
+logging.basicConfig(
+    level=logging.INFO,
+    format="%(asctime)s [%(levelname)s] %(name)s: %(message)s",
+    handlers=[logging.StreamHandler(sys.stdout)],
+)
+logger = logging.getLogger(__name__)
+
+app = Flask(__name__)
 init_db()
 
-# OpenAI API key
-openai.api_key = 'your_openai_api_key'
+client: Optional[OpenAI] = None
+if os.getenv("OPENAI_API_KEY"):
+    client = OpenAI(api_key=os.getenv("OPENAI_API_KEY"))
 
-@app.route('/')
-def index():
-    return render_template('index.html')
 
-@app.route('/chatbot', methods=['POST'])
-def chatbot():
-    user_message = request.json.get('message')
-    if not user_message:
-        return jsonify({'response': 'Please provide a message.'}), 400
+def generate_response(user_message: str, service_description: str) -> str:
+    if not client:
+        raise RuntimeError("OPENAI_API_KEY is not set")
 
-    try:
-        response = get_ai_response(user_message)
-        return jsonify({'response': response})
-    except Exception as e:
-        return jsonify({'response': 'An error occurred while processing your request.'}), 500
+    prompt = f"""
+    You are an intelligent assistant for a service provider.
+    Service Description: {service_description}
 
-def get_ai_response(message):
-    prompt = f"User: {message}\nBot:"
-    response = openai.Completion.create(
-        engine="text-davinci-003",
-        prompt=prompt,
-        max_tokens=150
+    User Question: {user_message}
+
+    Provide a helpful, accurate, and professional response based on the service description.
+    If the question is not related to the service, politely redirect the user.
+    """
+
+    response = client.chat.completions.create(
+        model=os.getenv("OPENAI_MODEL", "gpt-3.5-turbo"),
+        messages=[
+            {"role": "system", "content": "You are a helpful service assistant chatbot."},
+            {"role": "user", "content": prompt},
+        ],
+        max_tokens=300,
+        temperature=0.5,
     )
-    return response.choices[0].text.strip()
+    return response.choices[0].message.content.strip()
 
-@app.route('/add_user', methods=['POST'])
-def add_user_route():
-    data = request.json
-    if not all(key in data for key in ('name', 'email', 'service_description')):
-        return jsonify({'message': 'Missing data'}), 400
+
+@app.route("/")
+def index():
+    return render_template("index.html")
+
+
+@app.route("/chatbot", methods=["POST"])
+def chatbot():
+    data = request.get_json(silent=True)
+    if not data:
+        return jsonify({"error": "Invalid JSON body"}), 400
+
+    message = data.get("message", "").strip()
+    if not message:
+        return jsonify({"error": "Message is required"}), 400
+
+    user_email = data.get("email", "guest@example.com")
 
     try:
-        add_user(data['name'], data['email'], data['service_description'])
-        return jsonify({'message': 'User added successfully'})
+        user = session.query(User).filter_by(email=user_email).first()
+        service_description = user.service_description if user else "General assistance service."
+
+        response_text = generate_response(message, service_description)
+        logger.info(f"Chatbot response generated for {user_email}")
+        return jsonify({"response": response_text})
+    except RuntimeError as e:
+        logger.error(f"Config error: {e}")
+        return jsonify({"error": str(e)}), 500
     except SQLAlchemyError as e:
-        return jsonify({'message': 'Database error'}), 500
+        logger.error(f"Database error: {e}")
+        return jsonify({"error": "Database error"}), 500
+    except Exception as e:
+        logger.error(f"Error generating response: {e}", exc_info=True)
+        return jsonify({"error": "Failed to generate response"}), 500
 
-def add_user(name, email, service_description):
-    new_user = User(name=name, email=email, service_description=service_description)
-    session.add(new_user)
-    session.commit()
 
-if __name__ == '__main__':
-    app.run(debug=True)
+if __name__ == "__main__":
+    port = int(os.getenv("PORT", 5000))
+    app.run(host="0.0.0.0", port=port, debug=os.getenv("DEBUG", "False").lower() == "true")

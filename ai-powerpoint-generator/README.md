@@ -1,33 +1,42 @@
-# AI-Powered PowerPoint Generator
+# AI PowerPoint Generator
 
-This project is an AI-powered application that generates high-quality PowerPoint presentations using Streamlit, OpenAI's GPT-4, and DALL-E 3.
+Automated presentation generator using OpenAI GPT and DALL-E, with Streamlit UI.
 
 ## Features
 
-- User-friendly interface built with Streamlit
-- Dynamic slide title generation using GPT-4
-- Content generation for each slide using GPT-4
-- Image generation for slides using DALL-E 3
-- Customizable presentation templates
-- Downloadable PowerPoint presentations
+- AI-generated slide titles and content (GPT-4)
+- AI-generated images for each slide (DALL-E 3)
+- Configurable number of slides and templates
+- Download generated `.pptx` files
+- Streamlit web interface
 
-## Setup
+## Quick Start
 
-1. Clone the repository.
-2. Create a virtual environment and activate it.
-3. Install the required packages.
-4. Set up your OpenAI API key:
-Create a `.env` file in the root directory and add your API key.
-5. Run the application.
+```bash
+cp .env.example .env  # Add your OPENAI_API_KEY
+pip install -r requirements.txt
+streamlit run run.py
+```
 
-## Usage
+Visit http://localhost:8501
 
-1. Enter the presentation topic
-2. Specify the number of slides
-3. Choose a presentation template
-4. Click "Generate Presentation"
-5. Download the generated PowerPoint file
+## Configuration
 
-## License
+| Variable | Default | Description |
+|----------|---------|-------------|
+| `OPENAI_API_KEY` | — | OpenAI API key |
+| `OPENAI_MODEL` | `gpt-4` | Chat model for titles/content |
+| `OPENAI_IMAGE_MODEL` | `dall-e-3` | Image generation model |
 
-This project is licensed under the MIT License.
+## Docker
+
+```bash
+docker build -t ai-ppt-generator .
+docker run -p 8501:8501 --env-file .env ai-ppt-generator
+```
+
+## Testing
+
+```bash
+pytest -v
+```

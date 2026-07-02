@@ -1,76 +1,43 @@
 # AdGenPro
 
-AdGenPro is an AI-powered tool designed to assist recruiters in crafting effective job advertisements. Leveraging the advanced capabilities of ChatGPT, AdGenPro transforms a brief job description and information from a company's career page into comprehensive job ads that are ready to be published on LinkedIn and other job recruiting sites.
+AI-powered job advertisement generator using OpenAI GPT.
 
-## Key Features
-- **AI-Driven Job Ad Creation:** Utilizes ChatGPT to generate detailed and engaging job ads based on minimal input, ensuring high-quality content that attracts top talent.
-- **Streamlined Workflow:** Simplifies the job ad creation process for recruiters, saving time and effort while maintaining consistency and professionalism.
-- **Multi-Platform Compatibility:** Produces job ads that are optimized for various recruiting platforms, including LinkedIn and other job boards, ensuring wide reach and visibility.
+## Features
 
-## Project Structure
-AdGenPro/
-├── app.py
-├── templates/
-│   └── index.html
-├── static/
-│   ├── style.css
-│   └── script.js
-├── requirements.txt
-└── README.md
+- Generate professional job ads from company career page + job description
+- Web UI with real-time generation
+- REST API endpoint for integration
 
+## Quick Start
 
-## Getting Started
+```bash
+cp .env.example .env  # Add your OPENAI_API_KEY
+pip install -r requirements.txt
+python app.py
+```
 
-### Prerequisites
-- Python 3.6+
-- Virtual environment tool (optional but recommended)
+Visit http://localhost:5000
 
-### Installation
+## API
 
-1. **Clone the repository:**
-    ```bash
-    git clone https://github.com/yourusername/AdGenPro.git
-    cd jAdGenPro
-    ```
+### POST /generate_ad
 
-2. **Create and activate a virtual environment:**
-    ```bash
-    python -m venv venv
-    source venv/bin/activate  # On Windows use `venv\Scripts\activate`
-    ```
+```json
+{
+  "career_page": "https://company.com/careers",
+  "job_description": "Senior Software Engineer with 5+ years..."
+}
+```
 
-3. **Install dependencies:**
-    ```bash
-    pip install -r requirements.txt
-    ```
+## Docker
 
-4. **Configure your environment:**
-    - Replace `your_openai_api_key` in `app.py` with your actual OpenAI API key.
+```bash
+docker build -t adgenpro .
+docker run -p 5000:5000 --env-file .env adgenpro
+```
 
-### Running the Application
+## Testing
 
-1. **Start the Flask application:**
-    ```bash
-    python app.py
-    ```
-
-2. **Access the application:**
-    Open your web browser and go to `http://localhost:5000`.
-
-## Usage
-
-- **Job Ad Generation Interface:**
-    - Enter the company's career page details and the job description.
-    - Click "Generate Job Ad" to create a personalized and engaging job ad.
-
-## Contact Information
-
-For any questions, suggestions, or feedback, please contact:
-
-- **Moynul Hasan Jishan**
-- **Email:** mh.jishan247@gmail.com
-- **LinkedIn:** [Moynul Hasan Jishan](https://www.linkedin.com/in/m-h-jishan)
-
-## License
-
-This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
+```bash
+pytest -v
+```

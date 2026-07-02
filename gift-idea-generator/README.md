@@ -1,32 +1,54 @@
 # Gift Idea Generator
 
-This project is a web application that generates personalized gift ideas based on user input. It uses the OpenAI API to create unique gift suggestions and matches them with products from an e-commerce inventory.
+AI-powered personalized gift recommendation engine using OpenAI GPT.
 
 ## Features
 
-- User-friendly form for inputting gift recipient details
-- AI-powered gift idea generation
-- Display of gift recommendations with related products
-- Responsive design for various screen sizes
+- Generate 3 personalized gift ideas based on recipient profile
+- Related product suggestions from inventory
+- Web UI with form input
+- REST API endpoint
+- Health check
 
-## Setup
+## Quick Start
 
-### Backend
+```bash
+cp .env.example .env  # Add your OPENAI_API_KEY
+cd backend
+pip install -r requirements.txt
+python app.py
+```
 
-1. Navigate to the `backend` directory.
-2. Install the required packages.
-3. Set up your OpenAI API key as an environment variable.
-4. Run the Flask application.
-### Frontend
+Visit http://localhost:5000
 
-1. Open the `frontend/index.html` file in a web browser or serve it using a local server.
+## API
 
-## Usage
+### POST /generate_gifts
 
-1. Fill out the form with the gift recipient's details
-2. Click "Generate Gift Ideas"
-3. View the AI-generated gift recommendations and related products.
+```json
+{
+  "age": 30,
+  "gender": "female",
+  "relation": "sister",
+  "interests": "reading, cooking",
+  "budget": 50,
+  "occasion": "birthday"
+}
+```
 
-## License
+### GET /health
 
-[MIT](https://choosealicense.com/licenses/mit/)
+Returns `{"status": "healthy"}`
+
+## Docker
+
+```bash
+docker build -t gift-idea-generator .
+docker run -p 5000:5000 --env-file .env gift-idea-generator
+```
+
+## Testing
+
+```bash
+pytest -v
+```

@@ -1,47 +1,45 @@
-# DepthForge - 2D to 3D Image Conversion
+# DepthForge
 
-DepthForge is an innovative web application that transforms 2D images into stunning 3D models using advanced AI algorithms. Developed by IntelliBot Labs, this tool opens up a world of possibilities for designers, artists, and 3D enthusiasts.
+Convert 2D images to 3D models and upload to Sketchfab.
 
 ## Features
 
-- **Easy-to-use Interface**: Simple drag-and-drop functionality for image upload.
-- **AI-Powered Conversion**: Utilizes state-of-the-art AI models to generate accurate 3D representations.
-- **Real-time Preview**: View your 3D model directly in the browser using Sketchfab's embed feature.
-- **Responsive Design**: Fully functional on both desktop and mobile devices.
+- Upload 2D images and convert to 3D models
+- Automatic upload to Sketchfab with metadata
+- Web UI with drag-and-drop interface
+- REST API endpoint
+- Health check
 
-## Technologies Used
+## Quick Start
 
-- **Frontend**: HTML5, CSS3, JavaScript (ES6+)
-- **Backend**: Python, Flask
-- **3D Processing**: Sketchfab API
-- **Styling**: Font Awesome for icons, Google Fonts for typography
+```bash
+cp .env.example .env  # Add your SKETCHFAB_API_TOKEN
+cd backend
+pip install -r requirements.txt
+python app.py
+```
 
-## Getting Started
+Visit http://localhost:5000
 
-### Prerequisites
+## API
 
-- Python 3.7+
-- pip
-- A Sketchfab account with an API token
+### POST /upload
 
-### Installation
+Multipart form data with `file` field (the 3D model file).
 
-1. Clone the repository.
-2. Set up the backend.
-3. Configure the Sketchfab API:
-- Open `app.py` and replace `'YOUR_SKETCHFAB_API_TOKEN'` with your actual Sketchfab API token.
+### GET /health
 
-4. Run the Flask server.
-5. Open the frontend:
-- Navigate to the `frontend` folder and open `index.html` in your web browser.
+Returns `{"status": "healthy"}`
 
-## Usage
+## Docker
 
-1. Click on "Choose Image" to select a 2D image from your device.
-2. Click "Generate 3D Model" to start the conversion process.
-3. Wait for the process to complete. The 3D model will be displayed in the viewer once ready.
-4. Interact with the 3D model using your mouse or touchscreen.
+```bash
+docker build -t depthforge .
+docker run -p 5000:5000 --env-file .env depthforge
+```
 
-## License
+## Testing
 
-This project is licensed under the MIT License - see the [LICENSE.md](LICENSE.md) file for details.
+```bash
+pytest -v
+```

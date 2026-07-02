@@ -1,9 +1,15 @@
 import os
-import openai
 from dotenv import load_dotenv
+from openai import OpenAI
 
-def set_openai_api_key():
-    load_dotenv()
-    openai.api_key = os.getenv("OPENAI_API_KEY")
-    if not openai.api_key:
-        raise ValueError("OpenAI API key not found. Please set it in the .env file.")
+load_dotenv()
+
+_client = None
+if os.getenv("OPENAI_API_KEY"):
+    _client = OpenAI(api_key=os.getenv("OPENAI_API_KEY"))
+
+
+def get_client() -> OpenAI:
+    if not _client:
+        raise ValueError("OPENAI_API_KEY not found. Please set it in the .env file.")
+    return _client

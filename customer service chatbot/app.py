@@ -1,82 +1,100 @@
 import logging
-from flask import Flask, request, jsonify
-from flask_cors import CORS
 import os
-import openai
-import time
-from langchain.chains import ConversationalRetrievalChain
-from langchain.chat_models import ChatOpenAI
-from langchain.document_loaders import DirectoryLoader
-from langchain.embeddings import OpenAIEmbeddings
-from langchain.indexes import VectorstoreIndexCreator
-from langchain.vectorstores import Chroma
-from dotenv import load_dotenv
+import sys
+from typing import Optional
 
-# Load environment variables from .env file
+from dotenv import load_dotenv
+from flask import Flask, request, jsonify, render_template
+from openai import OpenAI
+
+from constants import OPENAI_API_KEY, OPENAI_MODEL, KNOWLEDGE_BASE_PATH, PORT, DEBUG
+
 load_dotenv()
 
-# Set up logging
-logging.basicConfig(level=logging.INFO)
+logging.basicConfig(
+    level=logging.INFO,
+    format="%(asctime)s [%(levelname)s] %(name)s: %(message)s",
+    handlers=[logging.StreamHandler(sys.stdout)],
+)
 logger = logging.getLogger(__name__)
 
 app = Flask(__name__)
-CORS(app)
 
-# Set OpenAI API key from environment variable
-openai.api_key = os.getenv("OPENAI_API_KEY")
+client: Optional[OpenAI] = None
+if OPENAI_API_KEY:
+    client = OpenAI(api_key=OPENAI_API_KEY)
 
-try:
-    PERSIST = False
-    data_path = r"C:\Users\User\Desktop\Ai_Automation_Agency\chatbot\knowledge_base"
 
-    if PERSIST and os.path.exists("persist"):
-        vectorstore = Chroma(persist_directory="persist", embedding_function=OpenAIEmbeddings())
-        index = VectorstoreIndexCreator().vectorstore_wrapper(vectorstore=vectorstore)
-    else:
-        loader = DirectoryLoader(data_path)
-        if PERSIST:
-            index = VectorstoreIndexCreator(vectorstore_kwargs={"persist_directory":"persist"}).from_loaders([loader])
-        else:
-            index = VectorstoreIndexCreator().from_loaders([loader])
+def load_knowledge_base() -> str:
+    try:
+        with open(KNOWLEDGE_BASE_PATH, "r", encoding="utf-8") as f:
+            return f.read()
+    except FileNotFoundError:
+        logger.warning(f"Knowledge base file not found at {KNOWLEDGE_BASE_PATH}")
+        return ""
+    except Exception as e:
+        logger.error(f"Error loading knowledge base: {e}")
+        return ""
 
-    chain = ConversationalRetrievalChain.from_llm(
-        llm=ChatOpenAI(model="gpt-3.5-turbo"),
-        retriever=index.vectorstore.as_retriever(search_kwargs={"k": 1}),
+
+def generate_response(user_message: str, knowledge_base: str) -> str:
+    if not client:
+        raise RuntimeError("OPENAI_API_KEY is not set")
+
+    prompt = f"""
+    You are a helpful customer service assistant. Use the following knowledge base to answer questions.
+    If the answer is not in the knowledge base, say you don't have that information.
+
+    Knowledge Base:
+    {knowledge_base}
+
+    User Question: {user_message}
+    """
+
+    response = client.chat.completions.create(
+        model=OPENAI_MODEL,
+        messages=[
+            {"role": "system", "content": "You are a helpful customer service chatbot."},
+            {"role": "user", "content": prompt},
+        ],
+        max_tokens=300,
+        temperature=0.5,
     )
+    return response.choices[0].message.content.strip()
 
-    chat_history = []
 
-    @app.route('/chat', methods=['POST'])
-    def chat():
-        if request.method == 'OPTIONS':
-            return '', 204
+@app.route("/")
+def index():
+    return render_template("index.html")
 
-        try:
-            data = request.json
-            query = data.get('question', '')
-            if not query:
-                return jsonify({'error': 'No question provided'}), 400
 
-            # Add a delay of 1 second between requests
-            time.sleep(1)
+@app.route("/chat", methods=["POST"])
+def chat():
+    data = request.get_json(silent=True)
+    if not data:
+        return jsonify({"error": "Invalid JSON body"}), 400
 
-            result = chain({"question": query, "chat_history": chat_history})
-            answer = result['answer']
-            chat_history.append((query, answer))
-            return jsonify({'answer': answer})
-        except openai.error.RateLimitError as e:
-            logger.error(f"OpenAI API rate limit exceeded: {str(e)}")
-            return jsonify({'error': 'API rate limit exceeded. Please try again later.'}), 429
-        except Exception as e:
-            logger.error(f"An error occurred during chat: {str(e)}")
-            return jsonify({'error': 'An internal error occurred'}), 500
+    message = data.get("message", "").strip()
+    if not message:
+        return jsonify({"error": "Message is required"}), 400
 
-except openai.error.RateLimitError as e:
-    logger.error(f"OpenAI API rate limit exceeded during setup: {str(e)}")
-    print("Error: OpenAI API rate limit exceeded. Please check your plan and billing details.")
-except Exception as e:
-    logger.error(f"An error occurred during setup: {str(e)}")
-    print(f"Error during setup: {str(e)}")
-    
-if __name__ == '__main__':
-    app.run(host='0.0.0.0', port=5000, debug=True)
+    try:
+        knowledge_base = load_knowledge_base()
+        response_text = generate_response(message, knowledge_base)
+        logger.info("Chat response generated")
+        return jsonify({"response": response_text})
+    except RuntimeError as e:
+        logger.error(f"Config error: {e}")
+        return jsonify({"error": str(e)}), 500
+    except Exception as e:
+        logger.error(f"Error generating response: {e}", exc_info=True)
+        return jsonify({"error": "Failed to generate response"}), 500
+
+
+@app.route("/health")
+def health():
+    return jsonify({"status": "healthy"})
+
+
+if __name__ == "__main__":
+    app.run(host="0.0.0.0", port=PORT, debug=DEBUG)

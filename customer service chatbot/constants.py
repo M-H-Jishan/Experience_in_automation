@@ -1,12 +1,13 @@
-# constants.py
 import os
 from dotenv import load_dotenv
-try:
-    load_dotenv()
-except UnicodeDecodeError:
-    print("Warning: Could not load .env file due to encoding issues.")
 
-APIKEY = os.getenv("OPENAI_API_KEY")
+load_dotenv()
 
-if not APIKEY:
-    raise ValueError("No API key set for OpenAI. Please check your .env file or environment variables.")
+OPENAI_API_KEY = os.getenv("OPENAI_API_KEY", "")
+OPENAI_MODEL = os.getenv("OPENAI_MODEL", "gpt-3.5-turbo")
+KNOWLEDGE_BASE_PATH = os.getenv(
+    "KNOWLEDGE_BASE_PATH",
+    os.path.join(os.path.dirname(os.path.abspath(__file__)), "knowledge_base", "Data.txt"),
+)
+PORT = int(os.getenv("PORT", 5000))
+DEBUG = os.getenv("DEBUG", "False").lower() == "true"

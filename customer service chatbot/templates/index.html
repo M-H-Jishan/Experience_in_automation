@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Customer Service Chatbot</title>
+    <style>
+        body { font-family: Arial, sans-serif; max-width: 600px; margin: 50px auto; }
+        .chat-box { border: 1px solid #ccc; padding: 20px; height: 300px; overflow-y: scroll; border-radius: 8px; }
+        .chat-input { width: 100%; padding: 10px; margin-top: 10px; box-sizing: border-box; }
+        .msg { margin: 5px 0; }
+        .user { color: #0066cc; }
+        .bot { color: #333; }
+    </style>
+</head>
+<body>
+    <h1>Customer Service Chatbot</h1>
+    <div class="chat-box" id="chat-box"></div>
+    <input type="text" id="chat-input" class="chat-input" placeholder="Type your message..." onkeypress="handleKey(event)">
+    <script>
+        const chatBox = document.getElementById('chat-box');
+        const chatInput = document.getElementById('chat-input');
+
+        function handleKey(e) {
+            if (e.key === 'Enter') sendMessage();
+        }
+
+        function sendMessage() {
+            const message = chatInput.value.trim();
+            if (!message) return;
+            chatBox.innerHTML += '<div class="msg user"><b>You:</b> ' + message + '</div>';
+            chatInput.value = '';
+            fetch('/chat', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ message })
+            })
+            .then(r => r.json())
+            .then(data => {
+                chatBox.innerHTML += '<div class="msg bot"><b>Bot:</b> ' + (data.response || data.error) + '</div>';
+                chatBox.scrollTop = chatBox.scrollHeight;
+            });
+        }
+    </script>
+</body>
+</html>
